@@ -1,0 +1,22 @@
+{
+  "name": "manaware",
+  "version": "1.0.0",
+  "description": "self help blog for men",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dev-chris21/manaware.git"
+  },
+  "author": "developer-chris",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dev-chris21/manaware/issues"
+  },
+  "homepage": "https://github.com/dev-chris21/manaware#readme",
+  "dependencies": {
+    "express": "^5.0.1"
+  }
+}
