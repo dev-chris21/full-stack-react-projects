@@ -1,9 +1,20 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
+import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [formValues, setNewFormValues] = useState({name:'',number:''})
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
 
 
   const addPerson = (event) => {
