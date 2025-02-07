@@ -1,5 +1,5 @@
 import { useState,useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -7,11 +7,9 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+      personService
+      .getAll()
       .then(response => {
-        console.log('promise fulfilled')
         setPersons(response.data)
       })
   }, [])
@@ -29,9 +27,12 @@ const App = () => {
         name: name,
         number: number,
         important: Math.random() < 0.5,
-        id: String(persons.length + 1)
       }
-      setPersons([...persons, personObject])
+      personService
+      .create(personObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+      })
     }
       
  }
@@ -41,6 +42,19 @@ const App = () => {
       ...formValues,
       [e.target.name]: e.target.value
     })
+  }
+
+  const handleDelete = (id, name) => {
+    const isComfirmed = window.confirm(`Are you sure you want to delete${name}`)
+    if(isComfirmed){
+      personService
+      .remove(id)
+      .then(()=>{
+        setPersons(persons.filter(person=>person.id !== id))
+      })
+    } else {
+      console.log('deletion canceled.')
+    }
   }
 
   const handleFilter = (event) => {
@@ -59,7 +73,7 @@ const App = () => {
       <Filter handleFilter={handleFilter}/>
       <PersonForm handleChange={handleChange} formValues={formValues} addPerson={addPerson}/>
       <h2>Numbers</h2>
-      <Persons displayData={displayData}/>
+      <Persons displayData={displayData} handleDelete={handleDelete}/>
     </div>
   )
 }
@@ -88,12 +102,14 @@ const PersonForm = ({handleChange, formValues, addPerson}) => {
       </div>
   )
 }
-const Persons = ({displayData}) => {
+const Persons = ({displayData, handleDelete}) => {
   return (
       <div>
         <ul style={{listStyleType:'none', paddingLeft:'0', marginLeft:'0'}}>
-        {displayData.map((d) => 
-        <li key={d.id}>{d.name} {d.number}</li>
+        {displayData.map( d => 
+        <li key={d.id}>{d.name} {d.number}
+        <button onClick={()=>handleDelete(d.id, d.name)}>Delete</button>
+        </li>
         )}
       </ul>
       </div>
