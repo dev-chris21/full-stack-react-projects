@@ -1,10 +1,13 @@
 import { useState,useEffect } from 'react'
 import personService from './services/persons'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [formValues, setNewFormValues] = useState({name:'',number:''})
   const [searchQuery, setSearchQuery] = useState('')
+  const [addedMsg, setAddedMsg] = useState(null)
+  const [errorMsg, setErrorMsg] = useState(null)
 
   useEffect(() => {
       personService
@@ -16,13 +19,47 @@ const App = () => {
 
 
   const addPerson = (event) => {
+
       event.preventDefault()
+
       const name = formValues.name
       const number = formValues.number
       const existingName = persons.find(person => person.name === name)
-      if(existingName){
-        alert(`${name} is already added to phonebook`)
-      }else{
+      const existingNumber = persons.find(person => person.number === number)
+
+
+      if(existingName && !existingNumber){
+        const nameToFind = name
+        const perObject = persons.find(p=>p.name === nameToFind)
+        const id = perObject.id
+        console.log(id)
+        const patch = {
+          name: name,
+          number: number,
+          importance: Math.random() < 0.5,
+        }
+        personService
+        .update(id, patch)
+        .then(response => {
+          setPersons(persons.map(person => person.id === id ? response.data : person))
+        })
+        .catch(
+          setErrorMsg(
+            `information of '${patch.name}' has been removed from server`
+          ),
+          setTimeout(() => {
+            setAddedMsg(null)
+          }, 5000)
+        )
+      }
+
+
+      else if(existingName && existingNumber){
+        return `${name} has already been added`
+      }
+
+
+      else{
       const personObject = {
         name: name,
         number: number,
@@ -33,6 +70,14 @@ const App = () => {
       .then(response => {
         setPersons(persons.concat(response.data))
       })
+      .then(
+        setAddedMsg(
+          `Added '${personObject.name}'`
+        ),
+        setTimeout(() => {
+          setAddedMsg(null)
+        }, 5000)
+      )
     }
       
  }
@@ -70,6 +115,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification addedMsg={addedMsg}/>
+      <Enotification errorMsg={errorMsg}/>
       <Filter handleFilter={handleFilter}/>
       <PersonForm handleChange={handleChange} formValues={formValues} addPerson={addPerson}/>
       <h2>Numbers</h2>
@@ -113,6 +160,28 @@ const Persons = ({displayData, handleDelete}) => {
         )}
       </ul>
       </div>
+  )
+}
+
+const Notification = ({addedMsg}) => {
+  if(addedMsg==null){
+    return null
+  }
+  return (
+    <div className='added'>
+      {addedMsg}
+    </div>
+  )
+}
+
+const Enotification = ({errorMsg}) => {
+  if(errorMsg==null){
+    return null
+  }
+  return(
+    <div className='error'>
+      {errorMsg}
+    </div>
   )
 }
 
