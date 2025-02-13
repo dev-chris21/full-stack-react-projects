@@ -69,7 +69,7 @@ app.post('/persons', (req, res) => {
     })
   
     person.save().then(savedPerson => {
-      res.json(savedPerson)
+      res.redirect('/persons')
     })
   })
 
