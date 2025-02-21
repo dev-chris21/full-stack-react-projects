@@ -1,7 +1,0 @@
-POST http://localhost:3002/persons
-Content-Type: application/json
-
-{
-     "name": "munyumbwe mukumbwali",
-   "number":"948373636363"
-}
