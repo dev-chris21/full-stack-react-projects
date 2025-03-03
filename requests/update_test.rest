@@ -1,0 +1,9 @@
+Put http://localhost:3005/api/blogs/67ba2d1d31bf9d084d92299e
+Content-Type: application/json
+
+{
+    "title": "AI: the good the bad and the ugly",
+    "author": "illimitableman",
+    "url": "www.illimitableman.com",
+    "likes": 125
+}
