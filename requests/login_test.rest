@@ -1,8 +1,0 @@
-POST http://localhost:3005/api/login
-Content-Type: application/json
-
-{
-    "username": "mwambwa",
-    "name": "maamba",
-    "password": "chrispin"
-}
